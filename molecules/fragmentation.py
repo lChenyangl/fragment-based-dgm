@@ -38,7 +38,7 @@ def get_size(frag):
 
 
 def fragment_iterative(mol, min_length=3):
-
+    
     bond_data = list(BRICS.FindBRICSBonds(mol))
 
     try:
@@ -54,21 +54,33 @@ def fragment_iterative(mol, min_length=3):
     order = np.argsort(bonds).tolist()
     bonds = [bonds[i] for i in order]
 
+    print(bonds)
     frags, temp = [], deepcopy(mol)
+    bond_idx = 0
+    
+    head0, _ = break_on_bond(mol, bonds[0])
     for bond in bonds:
+        if bond_idx > 0:
+            bond = bond - bonds[bond_idx-1] -1
+
         res = break_on_bond(temp, bond)
+        print(bond, res, len(res))
 
         if len(res) == 1:
             frags.append(temp)
             break
 
         head, tail = res
+        print(mol_to_smiles(head), mol_to_smiles(tail))
         if get_size(head) < min_length or get_size(tail) < min_length:
             continue
 
         frags.append(head)
         temp = deepcopy(tail)
+        print(mol_to_smiles(temp))
+        bond_idx += 1
 
+    print('******', mol_to_smiles(head0))
     return frags
 
 
