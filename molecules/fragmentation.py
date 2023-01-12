@@ -25,7 +25,7 @@ def break_on_bond(mol, bond, min_length=3):
         dummyLabels=[(0, 0)])
 
     res = Chem.GetMolFrags(
-        broken, asMols=True, sanitizeFrags=False)
+        broken, asMols=True, sanitizeFrags=True)
 
     return res
 
