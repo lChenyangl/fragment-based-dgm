@@ -54,34 +54,33 @@ def fetch_dataset(name):
 def break_into_fragments(mol, smi):
     frags, head = fragment_iterative(mol)
 
-    n_trial = 5
+    n_trial = 3
     n = 0
-    try:
-        # double check to fragment the `head`    
-        while n < n_trial:
-            smiles = Chem.CanonSmiles(mol_to_smiles(head))
-            head = Chem.MolFromSmiles(smiles)
+    # double check to fragment the `head`    
+    while n < n_trial:
+        smiles = Chem.CanonSmiles(mol_to_smiles(head))
+        head = Chem.MolFromSmiles(smiles)
+        try:
             frag, head = fragment_iterative(head)
             for i in range(len(frag)):
                 frags.append(frag[i])
             n += 1
-    except Exception:
-        pass
-
+        except Exception:
+            break
+    
     print(len(frags))
-
     if len(frags) == 0:
         return smi, np.nan, 0
 
     if len(frags) == 1:
         return smi, smi, 1
 
-    rec, frags = reconstruct(frags)
-    if rec and mol_to_smiles(rec) == smi:
-        fragments = mols_to_smiles(frags)
-        return smi, " ".join(fragments), len(frags)
-
-    return smi, np.nan, 0
+    #rec, frags = reconstruct(frags)
+    #if rec and mol_to_smiles(rec) == smi:
+    fragments = mols_to_smiles(frags)
+    return smi, " ".join(fragments), len(frags)
+    
+    #return smi, np.nan, 0
 
 
 def read_and_clean_dataset(info):
