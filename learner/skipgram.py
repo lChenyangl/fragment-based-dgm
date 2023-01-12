@@ -131,12 +131,12 @@ def train_embeddings(config, data):
         # first word embedding
         w2v = Word2Vec(
             sentences,
-            vector_size=embed_size,
+            size=embed_size,
             window=embed_window,
             min_count=1,
             negative=5,
-            workers=20,
-            epochs=10,
+            workers=4,
+            iter=5,
             sg=1)
 
         vocab = w2v.wv.vocab
@@ -177,8 +177,8 @@ def train_embeddings(config, data):
             window=embed_window,
             min_count=1,
             negative=5,
-            workers=20,
-            epochs=10,
+            workers=4,
+            iter=5,
             sg=1)
 
     vocab = w2v.wv.vocab
