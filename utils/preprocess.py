@@ -2,6 +2,7 @@ import os
 import shutil
 import numpy as np
 import pandas as pd
+from rdkit import Chem
 from pathlib import Path
 from joblib import Parallel, delayed
 
@@ -52,7 +53,10 @@ def fetch_dataset(name):
 
 
 def break_into_fragments(mol, smi):
-    frags, head = fragment_iterative(mol)
+    try:
+        frags, head = fragment_iterative(mol)
+    except Exception:
+        return smi, smi, 1
 
     n_trial = 3
     n = 0
@@ -68,7 +72,6 @@ def break_into_fragments(mol, smi):
         except Exception:
             break
     
-    print(len(frags))
     if len(frags) == 0:
         return smi, np.nan, 0
 
@@ -148,6 +151,9 @@ def save_dataset(dataset, info):
 def preprocess_dataset(name, n_jobs):
     info = get_dataset_info(name)
     dataset = read_and_clean_dataset(info)
+
+    #dataset = pd.read_csv(DATA_DIR / info['name'] / 'RAW' / '20_test_dataset.csv')
+    #dataset = dataset.replace(r'\n', '', regex=True)
     dataset = add_atom_counts(dataset, info, n_jobs)
     dataset = add_bond_counts(dataset, info, n_jobs)
     dataset = add_ring_counts(dataset, info, n_jobs)
