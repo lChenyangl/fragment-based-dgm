@@ -152,7 +152,7 @@ def count_dummies(mol):
     return count
 
 
-def reconstruct(frags, reverse=False):
+def reconstruct(frags):
     if len(frags) == 1:
         return strip_dummy_atoms(frags[0]), frags
 
